@@ -27,11 +27,14 @@ largestPalindrome xs = getMax (foldlMap' (Max . filterPal) xs)
   where
     filterPal !x = if isPalindrome x then x else 0
 
-threeDigitsProducts :: [Int]
-threeDigitsProducts = (*) <$> threeDigits <*> threeDigits
-  where
-    threeDigits :: [Int]
-    threeDigits = [100..999]
+threeDigitsProducts :: [Int] -> [Int] -> [Int]
+threeDigitsProducts x y = (*) <$> x <*> y
+
+scaleLargestPalindrome :: [[Int]] -> Int
+scaleLargestPalindrome [] = 0
+scaleLargestPalindrome (xs : xxs) =
+  let prods = threeDigitsProducts xs xs
+  in case largestPalindrome prods of { 0 -> scaleLargestPalindrome xxs; x -> x; }
 
 isPalindrome :: Int -> Bool
 isPalindrome !n
@@ -43,7 +46,17 @@ isPalindrome !n
           else if n == reverse then True else False
 
 solve :: IO Int
-solve = pure $ largestPalindrome threeDigitsProducts
+solve = pure $ scaleLargestPalindrome
+  [ [900..999]
+  , [800..899]
+  , [700..799]
+  , [600..699]
+  , [500..599]
+  , [400..499]
+  , [300..399]
+  , [200..299]
+  , [100..199]
+  ]
 
 problem :: Text
 problem = mconcat
